@@ -1,4 +1,21 @@
-# AI 聚合网关
+# AI 聚合网关 · DSH 适配版
+
+> **这是 [xibai6668/Android-AI-gateway](https://github.com/xibai6668/Android-AI-gateway) 的 fork，专门为 DSH（DeepSeekRuntime）做适配。**
+>
+> 上游原版面向通用客户端；这个分支额外处理了 **DSH 宿主注入的系统提示词**在 CodeBuddy / WorkBuddy 通道上触发的 `400 11-128 Illegal API invocation from an unapproved channel`。
+>
+> 不用 DSH 的话，用[上游原版](https://github.com/xibai6668/Android-AI-gateway)就行，不需要这个分支。
+>
+> **本分支相对上游的改动**：
+>
+> - **指纹适配**：上游按「连续原文逐字匹配」拦截，补了三条实测有效的改写规则（`DeepSeekRuntime` 带空格版、`project root` 两种写法、裸错误码 `11-128`），并在 `prepareCodeBuddyRequest` 里加了整包兜底（`tools` 描述等 `messages` 之外的区域也会被处理）
+> - **请求体上限**：`MAX_BODY_BYTES` 从 8MB 提到 64MB，长上下文（几十轮工具调用 + 大文件）不再被直接拒
+>
+> 改动已同步提了 PR [#18](https://github.com/xibai6668/Android-AI-gateway/pull/18)（只含指纹修复，不含 64MB 改动）。
+>
+> 预编译包见 [Releases](https://github.com/mcajin654432-commits/Android-AI-gateway/releases)。
+
+---
 
 Android 上运行的本地 AI 模型聚合网关：把多家私有 AI 服务账号统一翻译成 OpenAI 兼容接口，暴露在 `http://127.0.0.1:8790/v1`。
 
